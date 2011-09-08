@@ -1,0 +1,82 @@
+#!/usr/bin/env ruby
+require 'rubygems'
+require 'optparse'
+
+unless system("which timeout > /dev/null")
+  warn "Please install timeout commandline tool e.g. via apt-get install timeout / apt-get install coreutils"
+end
+
+options = {}
+OptionParser.new do |opts|
+  opts.banner = <<BANNER
+Guaranteed zombie passengers death
+
+Usage:
+    zombie_passenger_killer [options]
+
+Options:
+BANNER
+  opts.on("-m", "--max [SIZE]","Max high CPU entries in history before killing") {|i| options[:max]=i }
+  opts.on("-h", "--history [SIZE]","History size") {|i| options[:history]=i }
+  opts.on("-c", "--cpu [PERCENT]","Mark as high CPU when above PERCENT") {|i| options[:cpu]=i }
+  opts.on("-g", "--grace [SECONDS]","Wait SECONDS before hard-killing (-9) a process") {|i| options[:grace]=i }
+  opts.on("-i", "--interval [SECONDS]","Check every SECONDS") {|i| options[:interval]=i }
+  opts.on("-p", "--pattern [PATTERN]","Find processes with this pattern") {|i| options[:pattern]=i }
+  opts.on("-h", "--help","Show this.") { puts opts; exit }
+  opts.on('-v', '--version','Show Version'){ puts Smusher::VERSION; exit}
+end.parse!
+
+require 'tempfile'
+
+CPU_HISTORY = {}
+MAX_HISTORY = options[:history] || 5
+MAX_FAILS = options[:max]
+MAX_CPU = options[:cpu] || 70
+GRACE_TIME = options[:grace] || 5
+INTERVAL = options[:interval] || 5
+PASSENGER_PROCESS_PATTERN = options[:pattern] || ' Rack: '
+
+$stdout.sync = true
+puts "Started at #{Time.now}"
+
+def store_current_cpu(processes)
+  keys_to_remove = CPU_HISTORY.keys - processes.map{|x| x[:pid] }
+  keys_to_remove.each{|k| CPU_HISTORY.delete k }
+
+  processes.each do |process|
+    CPU_HISTORY[process[:pid]] ||= []
+    CPU_HISTORY[process[:pid]] << process[:cpu]
+    CPU_HISTORY[process[:pid]] = CPU_HISTORY[process[:pid]].last(MAX_HISTORY)
+  end
+end
+
+def get_strace(pid, time)
+  %x(timeout -9 #{time} strace -p #{pid} 2>&1) if system("which timeout > /dev/null")
+end
+
+loop do
+  active_pids_in_passenger_status = %x(passenger-status|grep PID).split("\n").map{|x| x.strip.match(/PID: \d*/).to_s.split[1]}.map(&:to_i)
+  active_processes_in_processlist = %x(ps -eo pid,pcpu,args|grep -v grep|grep '#{PASSENGER_PROCESS_PATTERN}').split("\n").map{|x| y = x.strip.split[0..1]; {:pid => y.first.to_i, :cpu => y.last.to_f}}
+  zombies = active_processes_in_processlist.map{|x| x[:pid] } - active_pids_in_passenger_status
+
+  # kill processes with high CPU if user wants it
+  high_load = if MAX_FAILS
+    store_current_cpu active_processes_in_processlist
+    active_pids_in_passenger_status.select do |pid|
+      CPU_HISTORY[pid].count{|x| x > MAX_CPU } >= MAX_FAILS
+    end
+  else
+    []
+  end
+
+  (high_load + zombies).each do |pid|
+    puts "Killing passenger process #{pid}"
+    puts get_strace(pid, 5)
+    puts %x(kill #{pid})
+    sleep GRACE_TIME
+    %x(kill -9 #{pid})
+  end
+
+  sleep INTERVAL
+end
+

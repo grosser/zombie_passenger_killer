@@ -6,7 +6,7 @@ begin
   require 'jeweler'
   Jeweler::Tasks.new do |gem|
     gem.name = 'zombie_passenger_killer'
-    gem.summary = "Garanteed zombie passengers death"
+    gem.summary = "Guaranteed zombie passengers death"
     gem.email = "michael@grosser.it"
     gem.homepage = "http://github.com/grosser/#{gem.name}"
     gem.authors = ["Michael Grosser"]
