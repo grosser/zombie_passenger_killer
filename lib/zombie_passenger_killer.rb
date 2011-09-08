@@ -2,23 +2,23 @@ class ZombiePassengerKiller
   VERSION = File.read( File.join(File.dirname(__FILE__),'..','VERSION') ).strip
 
   def initialize(options)
-    @CPU_HISTORY = {}
-    @MAX_HISTORY = options[:history] || 5
-    @MAX_FAILS = options[:max]
-    @MAX_CPU = options[:cpu] || 70
-    @GRACE_TIME = options[:grace] || 5
-    @INTERVAL = options[:interval] || 5
-    @PASSENGER_PROCESS_PATTERN = options[:pattern] || ' Rack: '
+    @history = {}
+    @history_entries = options[:history] || 5
+    @max_high_cpu = options[:max]
+    @high_cpu = options[:cpu] || 70
+    @grace_time = options[:grace] || 5
+    @interval = options[:interval] || 5
+    @pattern = options[:pattern] || ' Rack: '
   end
 
   def store_current_cpu(processes)
-    keys_to_remove = @CPU_HISTORY.keys - processes.map{|x| x[:pid] }
-    keys_to_remove.each{|k| !@CPU_HISTORY.delete k }
+    keys_to_remove = @history.keys - processes.map{|x| x[:pid] }
+    keys_to_remove.each{|k| !@history.delete k }
 
     processes.each do |process|
-      @CPU_HISTORY[process[:pid]] ||= []
-      @CPU_HISTORY[process[:pid]] << process[:cpu]
-      @CPU_HISTORY[process[:pid]] = @CPU_HISTORY[process[:pid]].last(@MAX_HISTORY)
+      @history[process[:pid]] ||= []
+      @history[process[:pid]] << process[:cpu]
+      @history[process[:pid]] = @history[process[:pid]].last(@history_entries)
     end
   end
 
@@ -32,10 +32,10 @@ class ZombiePassengerKiller
     zombies = active_processes_in_processlist.map{|x| x[:pid] } - active_pids_in_passenger_status
 
     # kill processes with high CPU if user wants it
-    high_load = if @MAX_FAILS
+    high_load = if @max_high_cpu
       store_current_cpu active_processes_in_processlist
       active_pids_in_passenger_status.select do |pid|
-        @CPU_HISTORY[pid].count{|x| x > @MAX_CPU } >= @MAX_FAILS
+        @history[pid].count{|x| x > @high_cpu } >= @max_high_cpu
       end
     else
       []
@@ -51,7 +51,7 @@ class ZombiePassengerKiller
   end
 
   def process_status
-    %x(ps -eo pid,pcpu,args|grep -v grep|grep '#{@PASSENGER_PROCESS_PATTERN}').split("\n").map do |line|
+    %x(ps -eo pid,pcpu,args|grep -v grep|grep '#{@pattern}').split("\n").map do |line|
        values = line.strip.split[0..1]
        {:pid => values.first.to_i, :cpu => values.last.to_f}
     end
@@ -61,7 +61,7 @@ class ZombiePassengerKiller
     puts "Killing passenger process #{pid}"
     puts get_strace(pid, 5)
     puts %x(kill #{pid})
-    sleep @GRACE_TIME
+    sleep @grace_time
     %x(kill -9 #{pid})
   end
 end
