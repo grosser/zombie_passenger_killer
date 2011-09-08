@@ -1,4 +1,4 @@
-![Zombies on a train](http://www.motifake.com/image/demotivational-poster/1002/zombies-on-a-train-zombies-oh-shi-demotivational-poster-1265174018.jpg)
+![Zombies on a train](http://dl.dropbox.com/u/2670385/Web/zombie.jpeg)
 
 Guaranteed zombie passengers death.
 
