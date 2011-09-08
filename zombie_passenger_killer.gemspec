@@ -5,16 +5,30 @@
 
 Gem::Specification.new do |s|
   s.name = %q{zombie_passenger_killer}
-  s.version = "0.0.0"
+  s.version = "0.1.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Michael Grosser"]
   s.date = %q{2011-09-08}
+  s.default_executable = %q{zombie_passenger_killer}
   s.email = %q{michael@grosser.it}
+  s.executables = ["zombie_passenger_killer"]
+  s.files = [
+    "Gemfile",
+    "Gemfile.lock",
+    "Rakefile",
+    "Readme.md",
+    "VERSION",
+    "bin/zombie_passenger_killer",
+    "lib/zombie_passenger_killer.rb",
+    "spec/spec_helper.rb",
+    "spec/zombie_passenger_killer_spec.rb",
+    "zombie_passenger_killer.gemspec"
+  ]
   s.homepage = %q{http://github.com/grosser/zombie_passenger_killer}
   s.require_paths = ["lib"]
   s.rubygems_version = %q{1.6.2}
-  s.summary = %q{Garanteed zombie passengers death}
+  s.summary = %q{Guaranteed zombie passengers death}
 
   if s.respond_to? :specification_version then
     s.specification_version = 3
