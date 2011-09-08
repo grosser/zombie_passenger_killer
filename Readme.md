@@ -2,8 +2,8 @@
 
 Guaranteed zombie passengers death.
 
- - who are no longer in passenger-status
- - with high CPU load (Optional)
+ - no longer in passenger-status ?
+ - high CPU load over long period (Optional) ?
 
 strace of killed zombies is printed, so debugging is easier.
 
