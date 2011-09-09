@@ -34,10 +34,12 @@ Usage
 ### Bluepill script
 
     app.process("zombie_passenger_killer") do |process|
-      process.start_command = "zombie_passenger_killer --max 5 --history 10 --cpu 30 --interval 10 >> /var/log/autorotate/zombie_passenger_killer.log 2>&1"
+      process.start_command = "zombie_passenger_killer --max 5 --history 10 --cpu 30 --interval 10"
+      process.stdout = process.stderr = "/var/log/autorotate/zombie_passenger_killer.log"
       process.pid_file = "/var/run/zombie_passenger_killer.pid"
       process.daemonize = true
     end
+
 
 ### God script
 
