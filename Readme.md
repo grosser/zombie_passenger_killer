@@ -21,14 +21,15 @@ Usage
     zombie_passenger_killer [options]
 
     Options:
-        -m, --max [SIZE]                 Max high CPU entries in history before killing
-            --history [SIZE]             History size
-        -c, --cpu [PERCENT]              Mark as high CPU when above PERCENT
-        -g, --grace [SECONDS]            Wait SECONDS before hard-killing (-9) a process
-        -i, --interval [SECONDS]         Check every SECONDS
-        -p, --pattern [PATTERN]          Find processes with this pattern
+        -m, --max [SIZE]                 Max high CPU entries in history before killing (default: off)
+            --history [SIZE]             History size (default: 5)
+        -c, --cpu [PERCENT]              Mark as high CPU when above PERCENT (default: 70)
+        -g, --grace [SECONDS]            Wait SECONDS before hard-killing (-9) a process (default: 5)
+        -i, --interval [SECONDS]         Check every SECONDS (default: 10)
+        -p, --pattern [PATTERN]          Find processes with this pattern (default: ' Rack: ')
         -h, --help                       Show this.
         -v, --version                    Show Version
+
 
 ### Bluepill script
 

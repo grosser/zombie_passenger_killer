@@ -7,7 +7,6 @@ class ZombiePassengerKiller
     @max_high_cpu = options[:max]
     @high_cpu = options[:cpu] || 70
     @grace_time = options[:grace] || 5
-    @interval = options[:interval] || 5
     @pattern = options[:pattern] || ' Rack: '
   end
 
