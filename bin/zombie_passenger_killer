@@ -26,7 +26,7 @@ BANNER
   opts.on("-i", "--interval [SECONDS]", Integer, "Check every SECONDS (default: 10)") {|i| options[:interval]=i }
   opts.on("-p", "--pattern [PATTERN]", String, "Find processes with this pattern (default: ' Rack: ')") {|i| options[:pattern]=i }
   opts.on("-h", "--help","Show this.") { puts opts; exit }
-  opts.on('-v', '--version','Show Version'){ puts Smusher::VERSION; exit}
+  opts.on('-v', '--version','Show Version'){ puts ZombiePassengerKiller::VERSION; exit}
 end.parse!
 
 $stdout.sync = true

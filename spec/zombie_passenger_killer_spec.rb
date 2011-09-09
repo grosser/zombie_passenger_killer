@@ -55,4 +55,12 @@ describe ZombiePassengerKiller do
     killer.should_receive(:kill_zombie).with(111)
     killer.hunt_zombies
   end
+
+  it "prints its version" do
+    `./bin/zombie_passenger_killer -v`.should =~ /^\d+\.\d+\.\d+$/m
+  end
+
+  it "prints help" do
+    `./bin/zombie_passenger_killer -h`.should include('Usage')
+  end
 end
