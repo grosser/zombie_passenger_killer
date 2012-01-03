@@ -27,7 +27,7 @@ class ZombiePassengerKiller
     begin
       Timeout::timeout(time) { %x(strace -p #{pid} 2>&1) }
     rescue Timeout::Error
-      puts 'Timeout'
+      'strace Timeout'
     end
   end
 
