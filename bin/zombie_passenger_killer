@@ -35,3 +35,4 @@ loop do
   killer.hunt_zombies
   sleep options[:interval] || 10
 end
+
