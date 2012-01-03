@@ -47,7 +47,7 @@ class ZombiePassengerKiller
     end
 
     (high_load + zombies).each do |pid|
-      puts "kill_zombie " + pid.to_s
+      kill_zombie pid
     end
   end
 
