@@ -63,10 +63,15 @@ class ZombiePassengerKiller
   end
 
   def kill_zombie(pid)
-    puts "Killing passenger process #{pid}"
-    puts get_strace(pid, 5)
-    puts %x(kill #{pid})
+    log "Killing passenger process #{pid}"
+    log get_strace(pid, 5)
+    log %x(kill #{pid})
     sleep @grace_time
     %x(kill -9 #{pid})
   end
+
+  def log(s)
+    puts "#{Time.now} #{s}"
+  end
+
 end
