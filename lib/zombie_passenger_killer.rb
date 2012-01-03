@@ -8,7 +8,7 @@ class ZombiePassengerKiller
     @history_entries = options[:history] || 5
     @max_high_cpu = options[:max]
     @high_cpu = options[:cpu] || 70
-    @grace_time = options[:grace] || 5
+    @grace_time = options[:grace] || 10
     @pattern = options[:pattern] || 'Rails:'
   end
 
