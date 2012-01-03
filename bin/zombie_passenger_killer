@@ -5,10 +5,6 @@ require 'optparse'
 $LOAD_PATH << File.join(File.dirname(__FILE__), '..', 'lib')
 require 'zombie_passenger_killer'
 
-unless system("which timeout > /dev/null")
-  warn "Please install timeout commandline tool e.g. via apt-get install timeout / apt-get install coreutils"
-end
-
 options = {}
 OptionParser.new do |opts|
   opts.banner = <<BANNER

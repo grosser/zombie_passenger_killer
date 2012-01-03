@@ -1,3 +1,5 @@
+require 'timeout'
+
 class ZombiePassengerKiller
   VERSION = File.read( File.join(File.dirname(__FILE__),'..','VERSION') ).strip
 
@@ -7,7 +9,7 @@ class ZombiePassengerKiller
     @max_high_cpu = options[:max]
     @high_cpu = options[:cpu] || 70
     @grace_time = options[:grace] || 5
-    @pattern = options[:pattern] || ' Rack: '
+    @pattern = options[:pattern] || 'Rails:'
   end
 
   def store_current_cpu(processes)
@@ -22,7 +24,11 @@ class ZombiePassengerKiller
   end
 
   def get_strace(pid, time)
-    %x(timeout #{time} strace -p #{pid} 2>&1) if system("which timeout > /dev/null")
+    begin
+      Timeout::timeout(time) { %x(strace -p #{pid} 2>&1) }
+    rescue Timeout::Error
+      puts 'Timeout'
+    end
   end
 
   def hunt_zombies
@@ -41,12 +47,12 @@ class ZombiePassengerKiller
     end
 
     (high_load + zombies).each do |pid|
-      kill_zombie pid
+      puts "kill_zombie " + pid.to_s
     end
   end
 
   def passenger_pids
-    %x(passenger-status|grep PID).split("\n").map{|x| x.strip.match(/PID: \d*/).to_s.split[1]}.map(&:to_i)
+    %x(sudo passenger-status|grep PID).split("\n").map{|x| x.strip.match(/PID: \d*/).to_s.split[1]}.map(&:to_i)
   end
 
   def process_status
