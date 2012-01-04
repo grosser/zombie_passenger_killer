@@ -24,11 +24,7 @@ class ZombiePassengerKiller
   end
 
   def get_strace(pid, time)
-    begin
-      Timeout::timeout(time) { %x(strace -p #{pid} 2>&1) }
-    rescue Timeout::Error
-      'strace Timeout'
-    end
+    `( strace -p #{pid} 2>&1 ) & sleep #{time} ; kill $!`
   end
 
   def hunt_zombies
@@ -65,9 +61,9 @@ class ZombiePassengerKiller
   def kill_zombie(pid)
     log "Killing passenger process #{pid}"
     log get_strace(pid, 5)
-    log %x(kill #{pid} 2>&1)
+    Process.kill('TERM', pid)
     sleep @grace_time
-    log %x(kill -9 #{pid} 2>&1)
+    Process.kill('KILL', pid) if Process.getpgid(pid) rescue nil
   end
 
   def log(s)
