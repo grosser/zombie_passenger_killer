@@ -67,11 +67,11 @@ class ZombiePassengerKiller
     log get_strace(pid, 5)
     log %x(kill #{pid})
     sleep @grace_time
-    %x(kill -9 #{pid})
+    log %x(kill -9 #{pid})
   end
 
   def log(s)
-    puts "#{Time.now} #{s}"
+    puts "** [#{Time.now}] #$$: #{s}" unless s.empty?
   end
 
 end
