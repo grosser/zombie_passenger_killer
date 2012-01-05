@@ -10,6 +10,7 @@ class ZombiePassengerKiller
     @high_cpu = options[:cpu] || 70
     @grace_time = options[:grace] || 5
     @pattern = options[:pattern] || ' Rack: '
+    @strace_time = 5
     @out = STDOUT
   end
 
@@ -25,7 +26,8 @@ class ZombiePassengerKiller
   end
 
   def get_strace(pid, time)
-    %x(timeout #{time} strace -p #{pid} 2>&1) if system("which timeout > /dev/null")
+    Process.getpgid(pid) rescue return 'No such process'
+    `( strace -p #{pid} 2>&1 ) & sleep #{time} ; kill $! 2>&1`
   end
 
   def hunt_zombies
@@ -61,7 +63,7 @@ class ZombiePassengerKiller
 
   def kill_zombie(pid)
     @out.puts "Killing passenger process #{pid}"
-    @out.puts get_strace(pid, 5)
+    @out.puts get_strace(pid, @strace_time)
     Process.kill('TERM', pid) rescue nil
     sleep @grace_time
     Process.kill('KILL', pid) rescue nil

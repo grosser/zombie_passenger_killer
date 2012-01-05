@@ -61,7 +61,10 @@ describe ZombiePassengerKiller do
   describe "#kill_zombies" do
     before do
       killer.out = StringIO.new
-      killer.instance_eval{ @grace_time = 0.1 }
+      killer.instance_eval{
+        @grace_time = 0.1
+        @strace_time = 0.1
+      }
     end
 
     def pid_of(marker)
@@ -109,6 +112,11 @@ describe ZombiePassengerKiller do
       pid = start_bogus_process
       killer.kill_zombie(pid)
       output.should include('attach:')
+    end
+
+    it "does not take a strace of a dead process" do
+      killer.kill_zombie(111)
+      output.should_not include('attach:')
     end
 
     it "does not fail with an unknown pid" do
