@@ -22,6 +22,7 @@ module ZombiePassengerKiller
     end
 
     def get_strace(pid, time)
+      Process.getpgid(pid) rescue return 'No such process'
       `( strace -p #{pid} 2>&1 ) & sleep #{time} ; kill $!`
     end
 
