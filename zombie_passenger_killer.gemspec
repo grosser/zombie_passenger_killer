@@ -15,6 +15,8 @@ Gem::Specification.new do |s|
   s.default_executable = %q{zombie_passenger_killer}
   s.email = %q{michael@grosser.it}
   s.executables = ["zombie_passenger_killer"]
+  s.extra_rdoc_files = ["README.md"]
+
   s.files       = `git ls-files`.split("\n")
   s.files      -= ['.rvmrc', '.gitignore']
   s.homepage = %q{http://github.com/grosser/zombie_passenger_killer}
