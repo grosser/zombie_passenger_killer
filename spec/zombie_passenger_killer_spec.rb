@@ -17,7 +17,7 @@ describe ZombiePassengerKiller do
       killer.hunt_zombies
     end
 
-    it "kill zombies" do
+    it "finds the right zombies" do
       killer.stub!(:passenger_pids).and_return([123])
       killer.stub!(:process_status).and_return([{:pid => 124, :cpu => 0}])
       killer.should_receive(:kill_zombie).with(124)
@@ -55,6 +55,63 @@ describe ZombiePassengerKiller do
       killer.hunt_zombies
       killer.should_receive(:kill_zombie).with(111)
       killer.hunt_zombies
+    end
+  end
+
+  describe "#kill_zombies" do
+    before do
+      killer.out = StringIO.new
+      killer.instance_eval{ @grace_time = 0.1 }
+    end
+
+    def pid_of(marker)
+      processes = `ps -ef | grep '#{marker}' | grep -v grep`
+      processes.strip.split("\n").last.split(/\s+/)[1].to_i
+    end
+
+    def start_bogus_process(options={})
+      marker = "TEST---#{rand(999999999999)}"
+      Thread.new do
+        `ruby -e 'at_exit{ puts "proper exit"; #{'sleep 10' if options[:hang]}}; sleep 10; puts "#{marker}"' 2>&1`
+      end
+      sleep 1 # give process time to spin up
+      pid_of(marker)
+    end
+
+    def process_alive?(pid)
+      Process.getpgid(pid)
+    rescue Errno::ESRCH
+      false
+    end
+
+    def output
+      killer.out.rewind
+      killer.out.read
+    end
+
+    it "kills normal processes" do
+      pid = start_bogus_process
+      lambda{
+        killer.kill_zombie(pid)
+      }.should change{ process_alive?(pid) }
+    end
+
+    it "kills hanging processes" do
+      pid = start_bogus_process :hang => true
+      lambda{
+        killer.kill_zombie(pid)
+      }.should change{ process_alive?(pid) }
+    end
+
+    it "prints an strace of the process" do
+      pid = start_bogus_process
+      killer.kill_zombie(pid)
+      output.should include('attach:')
+    end
+
+    it "does not fail with an unknown pid" do
+      killer.kill_zombie(111)
+      output.should include('No such process')
     end
   end
 

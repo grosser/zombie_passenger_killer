@@ -1,6 +1,8 @@
 class ZombiePassengerKiller
   VERSION = File.read( File.join(File.dirname(__FILE__),'..','VERSION') ).strip
 
+  attr_accessor :out # overwriteable for tests
+
   def initialize(options)
     @history = {}
     @history_entries = options[:history] || 5
@@ -8,6 +10,7 @@ class ZombiePassengerKiller
     @high_cpu = options[:cpu] || 70
     @grace_time = options[:grace] || 5
     @pattern = options[:pattern] || ' Rack: '
+    @out = STDOUT
   end
 
   def store_current_cpu(processes)
@@ -57,10 +60,10 @@ class ZombiePassengerKiller
   end
 
   def kill_zombie(pid)
-    puts "Killing passenger process #{pid}"
-    puts get_strace(pid, 5)
-    puts %x(kill #{pid})
+    @out.puts "Killing passenger process #{pid}"
+    @out.puts get_strace(pid, 5)
+    @out.puts %x(kill #{pid} 2>&1)
     sleep @grace_time
-    %x(kill -9 #{pid})
+    %x(kill -9 #{pid} 2>&1)
   end
 end
