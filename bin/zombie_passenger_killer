@@ -28,7 +28,7 @@ end.parse!
 $stdout.sync = true
 puts "Started at #{Time.now}"
 
-killer = ZombiePassengerKiller.new(options)
+killer = ZombiePassengerKiller::Reaper.new(options)
 
 $0 = File.basename(__FILE__)
 loop do
