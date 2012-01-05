@@ -62,8 +62,8 @@ class ZombiePassengerKiller
   def kill_zombie(pid)
     @out.puts "Killing passenger process #{pid}"
     @out.puts get_strace(pid, 5)
-    @out.puts %x(kill #{pid} 2>&1)
+    Process.kill('TERM', pid) rescue nil
     sleep @grace_time
-    %x(kill -9 #{pid} 2>&1)
+    Process.kill('KILL', pid) rescue nil
   end
 end

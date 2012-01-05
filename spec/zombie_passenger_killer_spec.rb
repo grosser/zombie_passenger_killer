@@ -93,6 +93,7 @@ describe ZombiePassengerKiller do
       pid = start_bogus_process
       lambda{
         killer.kill_zombie(pid)
+        sleep 0.1
       }.should change{ process_alive?(pid) }
     end
 
@@ -100,6 +101,7 @@ describe ZombiePassengerKiller do
       pid = start_bogus_process :hang => true
       lambda{
         killer.kill_zombie(pid)
+        sleep 0.1
       }.should change{ process_alive?(pid) }
     end
 
