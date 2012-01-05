@@ -50,7 +50,8 @@ Author
 ======
 
 ###Contributors
- - [mindreframer](https://github.com/mindreframer)
+ - [Roman Heinrich](https://github.com/mindreframer)
+ - [Kevin Mullin](https://github.com/kmullin)
 
 [Michael Grosser](http://grosser.it)<br/>
 michael@grosser.it<br/>
