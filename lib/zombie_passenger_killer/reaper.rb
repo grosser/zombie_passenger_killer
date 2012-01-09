@@ -29,7 +29,7 @@ module ZombiePassengerKiller
     def hunt_zombies
       active_pids_in_passenger_status = passenger_pids
       active_processes_in_processlist = process_status
-      zombies = active_processes_in_processlist.map{|x| x[:pid] } - active_pids_in_passenger_status
+      zombies = active_processes_in_processlist.map{|x| x[:pid] } - active_pids_in_passenger_status rescue Array.new
 
       # kill processes with high CPU if user wants it
       high_load = if @max_high_cpu
@@ -46,8 +46,10 @@ module ZombiePassengerKiller
       end
     end
 
+    # return array of pids reported from passenger-status command, nil if passenger-status doesn't run
     def passenger_pids
-      %x(passenger-status|grep PID).split("\n").map{|x| x.strip.match(/PID: \d*/).to_s.split[1]}.map(&:to_i)
+      pids = %x(passenger-status|grep PID).split("\n").map { |x| x.strip.match(/PID: \d*/).to_s.split[1].to_i }
+      pids if $?.exitstatus.zero?
     end
 
     def process_status
