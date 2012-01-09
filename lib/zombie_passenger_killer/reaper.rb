@@ -47,7 +47,7 @@ module ZombiePassengerKiller
     end
 
     def passenger_pids
-      %x(sudo passenger-status|grep PID).split("\n").map{|x| x.strip.match(/PID: \d*/).to_s.split[1]}.map(&:to_i)
+      %x(passenger-status|grep PID).split("\n").map{|x| x.strip.match(/PID: \d*/).to_s.split[1]}.map(&:to_i)
     end
 
     def process_status
@@ -60,9 +60,9 @@ module ZombiePassengerKiller
     def kill_zombie(pid)
       log "Killing passenger process #{pid}"
       log get_strace(pid, 5)
-      Process.kill('TERM', pid) if Process.getpgid(pid) rescue nil
-      sleep @grace_time
-      Process.kill('KILL', pid) if Process.getpgid(pid) rescue nil
+      Process.kill('TERM', pid) rescue nil
+      sleep @grace_time # wait for it to die
+      Process.kill('KILL', pid) rescue nil
     end
 
     def log(s)
