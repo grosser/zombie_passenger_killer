@@ -45,13 +45,6 @@ Usage
 
 # TODO
 
- - merge stuff from kmullin without changing all the defaults
- - bundler (modularize)
-  https://github.com/kmullin/zombie_passenger_killer/commit/892e2598c5c419df8302128ee5f8deda1f141b6c
-  https://github.com/kmullin/zombie_passenger_killer/commit/8837677e14fbb80b6b6e7604c99da47c3090a2ec
-  https://github.com/kmullin/zombie_passenger_killer/commit/225b856f1b8ba3d2a61a042c125c0e5d898e1ea6
- - status check https://github.com/kmullin/zombie_passenger_killer/commit/4533cc464f45147ed594608e50804ea60b9c3434
-
 Author
 ======
 
