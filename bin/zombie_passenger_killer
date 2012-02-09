@@ -30,7 +30,7 @@ puts "Started at #{Time.now}"
 
 killer = ZombiePassengerKiller::Reaper.new(options)
 
-$0 = File.basename(__FILE__)
+$0 = File.basename(__FILE__) + '-' + ZombiePassengerKiller::VERSION
 loop do
   killer.hunt_zombies
   sleep options[:interval] || 10
