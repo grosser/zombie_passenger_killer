@@ -18,9 +18,9 @@ BANNER
   opts.on("-m", "--max [SIZE]", Integer, "Max high CPU entries in history before killing (default: off)") {|i| options[:max]=i }
   opts.on("--history [SIZE]", Integer, "History size (default: 5)") {|i| options[:history]=i }
   opts.on("-c", "--cpu [PERCENT]", Integer, "Mark as high CPU when above PERCENT (default: 70)") {|i| options[:cpu]=i }
-  opts.on("-g", "--grace [SECONDS]", Integer, "Wait SECONDS before hard-killing (-9) a process (default: 10)") {|i| options[:grace]=i }
+  opts.on("-g", "--grace [SECONDS]", Integer, "Wait SECONDS before hard-killing (-9) a process (default: 5)") {|i| options[:grace]=i }
   opts.on("-i", "--interval [SECONDS]", Integer, "Check every SECONDS (default: 10)") {|i| options[:interval]=i }
-  opts.on("-p", "--pattern [PATTERN]", String, "Find processes with this pattern (default: 'Rails:')") {|i| options[:pattern]=i }
+  opts.on("-p", "--pattern [PATTERN]", String, "Find processes with this pattern (default: ' Rack: ')") {|i| options[:pattern]=i }
   opts.on("-h", "--help","Show this.") { puts opts; exit }
   opts.on('-v', '--version','Show Version'){ puts ZombiePassengerKiller::VERSION; exit}
 end.parse!
