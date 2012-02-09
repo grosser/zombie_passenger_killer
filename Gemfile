@@ -1,7 +1,7 @@
 source :rubygems
+gemspec
 
-group :dev do # not development <-> would add unneeded development dependencies in gemspec
+group :development do
   gem 'rake'
   gem 'rspec', '~>2'
-  gem 'jeweler'
 end
