@@ -72,8 +72,8 @@ module ZombiePassengerKiller
       Process.kill('KILL', pid) rescue nil
     end
 
-    def log(s)
-      @out.puts "#{@debug ? "** [#{Time.now}] #$$: " : ''}#{s}"
+    def log(msg)
+      @out.puts "#{@debug ? "** [#{Time.now}] #$$: " : ''}#{msg}"
     end
 
   end

@@ -5,6 +5,7 @@ $LOAD_PATH << File.join(File.dirname(__FILE__), '..', 'lib')
 require 'zombie_passenger_killer'
 
 options = {}
+version = ZombiePassengerKiller::VERSION
 OptionParser.new do |opts|
   opts.banner = <<BANNER
 Guaranteed zombie passengers death
@@ -20,18 +21,23 @@ BANNER
   opts.on("-g", "--grace [SECONDS]", Integer, "Wait SECONDS before hard-killing (-9) a process (default: 5)") {|i| options[:grace]=i }
   opts.on("-i", "--interval [SECONDS]", Integer, "Check every SECONDS (default: 10)") {|i| options[:interval]=i }
   opts.on("-p", "--pattern [PATTERN]", String, "Find processes with this pattern (default: ' Rack: ')") {|i| options[:pattern]=i }
-  opts.on("-h", "--help","Show this.") { puts opts; exit }
-  opts.on('-v', '--version','Show Version'){ puts ZombiePassengerKiller::VERSION; exit}
-  opts.on("-d", "--debug","Show timing on output") { options[:debug]=true }
+  opts.on("-h", "--help","Show this") { puts opts; exit }
+  opts.on("-v", "--version","Show Version"){ puts version; exit }
+  opts.on("-t", "--timing","Show timing on output") { options[:debug]=true }
 end.parse!
 
 $stdout.sync = true
-puts "Started at #{Time.now}"
+puts "PID: #{$$} Version: #{version} Started at #{Time.now}"
 
 killer = ZombiePassengerKiller::Reaper.new(options)
 
-$0 = File.basename(__FILE__) + '-' + ZombiePassengerKiller::VERSION
-loop do
-  killer.hunt_zombies
-  sleep options[:interval] || 10
+$0 = File.basename(__FILE__) + '-' + version
+begin
+  loop do
+    killer.hunt_zombies
+    sleep options[:interval] || 10
+  end
+rescue Interrupt
+  puts "Exiting..."
+  exit 0
 end
