@@ -1,6 +1,8 @@
 module ZombiePassengerKiller
   class Reaper
 
+    attr_accessor :out # overwriteable for tests
+
     def initialize(options)
       @history = {}
       @history_entries = options[:history] || 5
@@ -8,6 +10,8 @@ module ZombiePassengerKiller
       @high_cpu = options[:cpu] || 70
       @grace_time = options[:grace] || 5
       @pattern = options[:pattern] || ' Rack: '
+      @strace_time = 5
+      @out = STDOUT
     end
 
     def store_current_cpu(processes)
@@ -23,7 +27,7 @@ module ZombiePassengerKiller
 
     def get_strace(pid, time)
       Process.getpgid(pid) rescue return 'No such process'
-      `( strace -p #{pid} 2>&1 ) & sleep #{time} ; kill $!`
+      `( strace -p #{pid} 2>&1 ) & sleep #{time} ; kill $! 2>&1`
     end
 
     def hunt_zombies
@@ -60,15 +64,11 @@ module ZombiePassengerKiller
     end
 
     def kill_zombie(pid)
-      log "Killing passenger process #{pid}"
-      log get_strace(pid, 5)
+      @out.puts "Killing passenger process #{pid}"
+      @out.puts get_strace(pid, @strace_time)
       Process.kill('TERM', pid) rescue nil
       sleep @grace_time # wait for it to die
       Process.kill('KILL', pid) rescue nil
-    end
-
-    def log(s)
-      puts "** [#{Time.now}] #$$: #{s}" unless s.empty?
     end
 
   end
