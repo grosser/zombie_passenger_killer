@@ -22,6 +22,7 @@ BANNER
   opts.on("-p", "--pattern [PATTERN]", String, "Find processes with this pattern (default: ' Rack: ')") {|i| options[:pattern]=i }
   opts.on("-h", "--help","Show this.") { puts opts; exit }
   opts.on('-v', '--version','Show Version'){ puts ZombiePassengerKiller::VERSION; exit}
+  opts.on("-d", "--debug","Show timing on output") { options[:debug]=true }
 end.parse!
 
 $stdout.sync = true
