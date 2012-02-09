@@ -2,7 +2,7 @@ require File.expand_path('spec/spec_helper')
 
 describe ZombiePassengerKiller do
   let(:killer){
-    k = ZombiePassengerKiller.new(@options || {})
+    k = ZombiePassengerKiller::Reaper.new(@options || {})
     k.stub!(:passenger_pids).and_return([111])
     k
   }
