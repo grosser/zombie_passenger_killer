@@ -71,5 +71,9 @@ module ZombiePassengerKiller
       Process.kill('KILL', pid) rescue nil
     end
 
+    def log(s)
+      puts "** [#{Time.now}] #$$: #{s}" unless s.empty?
+    end
+
   end
 end
