@@ -23,7 +23,7 @@ BANNER
   opts.on("-p", "--pattern [PATTERN]", String, "Find processes with this pattern (default: ' Rack: ')") {|i| options[:pattern]=i }
   opts.on("-h", "--help","Show this") { puts opts; exit }
   opts.on("-v", "--version","Show Version"){ puts version; exit }
-  opts.on("-t", "--timing","Show timing on output") { options[:debug]=true }
+  opts.on("-t", "--timing","Show timing on output") { options[:show_times]=true }
 end.parse!
 
 $stdout.sync = true

@@ -10,7 +10,7 @@ module ZombiePassengerKiller
       @high_cpu = options[:cpu] || 70
       @grace_time = options[:grace] || 5
       @pattern = options[:pattern] || ' Rack: '
-      @debug = options[:debug] || false
+      @show_times = options[:show_times] || false
       @strace_time = 5
       @out = STDOUT
     end
@@ -73,7 +73,7 @@ module ZombiePassengerKiller
     end
 
     def log(msg)
-      @out.puts "#{@debug ? "** [#{Time.now}] #$$: " : ''}#{msg}"
+      @out.puts "#{@show_times ? "** [#{Time.now}] #$$: " : ''}#{msg}"
     end
 
   end
