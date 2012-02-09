@@ -53,7 +53,7 @@ module ZombiePassengerKiller
 
     # return array of pids reported from passenger-status command, nil if passenger-status doesn't run
     def passenger_pids
-      pids = %x(passenger-status 2>&1|grep PID).split("\n").map { |x| x.strip.match(/PID: \d*/).to_s.split[1].to_i }
+      pids = %x(passenger-status|grep PID).split("\n").map { |x| x.strip.match(/PID: \d*/).to_s.split[1].to_i }
       pids if $?.exitstatus.zero?
     end
 
