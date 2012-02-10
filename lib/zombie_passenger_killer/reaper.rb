@@ -10,6 +10,7 @@ module ZombiePassengerKiller
       @high_cpu = options[:cpu] || 70
       @grace_time = options[:grace] || 5
       @pattern = options[:pattern] || ' Rack: '
+      @show_times = options[:show_times] || false
       @strace_time = 5
       @out = STDOUT
     end
@@ -64,11 +65,15 @@ module ZombiePassengerKiller
     end
 
     def kill_zombie(pid)
-      @out.puts "Killing passenger process #{pid}"
-      @out.puts get_strace(pid, @strace_time)
+      log "Killing passenger process #{pid}"
+      log get_strace(pid, @strace_time)
       Process.kill('TERM', pid) rescue nil
       sleep @grace_time # wait for it to die
       Process.kill('KILL', pid) rescue nil
+    end
+
+    def log(msg)
+      @out.puts "#{@show_times ? "** [#{Time.now}] #$$: " : ''}#{msg}"
     end
 
   end
