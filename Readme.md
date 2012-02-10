@@ -40,6 +40,13 @@ Usage
       process.daemonize = true
     end
 
+### Monit script
+
+    check process zombie_killer
+      with pidfile "/var/run/zombie_passenger_killer.pid"
+      start program = "/bin/bash -c 'export PATH=$PATH:/usr/local/bin;zombie_passenger_killer --max 5 --history 10 --cpu 30 --interval 10 &>/var/log/zombie_passenger_killer.log & &>/dev/null;echo $! > /var/run/zombie_passenger_killer.pid'"
+      stop program = "/bin/bash -c 'PIDF=/var/run/zombie_passenger_killer.pid;/bin/kill `cat $PIDF` && rm -f $PIDF'"
+      group zombie_killer
 
 ### God script
 
