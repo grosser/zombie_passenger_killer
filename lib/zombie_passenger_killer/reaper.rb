@@ -11,8 +11,19 @@ module ZombiePassengerKiller
       @grace_time = options[:grace] || 5
       @pattern = options[:pattern] || ' Rack: '
       @show_times = options[:show_times] || false
+      @interval = options[:interval] || 10
       @strace_time = 5
       @out = STDOUT
+    end
+
+    def lurk
+      loop do
+        hunt_zombies
+        sleep @interval
+      end
+    rescue Interrupt
+      log "Exiting..."
+      raise $!
     end
 
     def store_current_cpu(processes)

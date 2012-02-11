@@ -29,15 +29,5 @@ end.parse!
 $stdout.sync = true
 puts "PID: #{$$} Version: #{version} Started at #{Time.now}"
 
-killer = ZombiePassengerKiller::Reaper.new(options)
-
 $0 = File.basename(__FILE__) + '-' + version
-begin
-  loop do
-    killer.hunt_zombies
-    sleep options[:interval] || 10
-  end
-rescue Interrupt
-  puts "Exiting..."
-  exit 0
-end
+ZombiePassengerKiller::Reaper.new(options).lurk

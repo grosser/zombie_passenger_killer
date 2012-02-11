@@ -138,6 +138,34 @@ describe ZombiePassengerKiller do
     end
   end
 
+  describe "#lurk" do
+    it "sleeps after checking" do
+      killer.should_receive(:hunt_zombies)
+      killer.should_receive(:sleep).with(10).and_raise "LOOP-BREAKER"
+      lambda{
+        killer.lurk
+      }.should raise_error "LOOP-BREAKER"
+    end
+
+    it "calls sleep with the given interval" do
+      @options = {:interval => 5}
+      killer.stub(:hunt_zombies)
+      killer.should_receive(:sleep).with(5).and_raise "LOOP-BREAKER"
+      lambda{
+        killer.lurk
+      }.should raise_error "LOOP-BREAKER"
+    end
+
+    it "prints Exiting on Interrupt" do
+      killer.stub(:hunt_zombies)
+      killer.should_receive(:sleep).and_raise Interrupt.new
+      lambda{
+        killer.lurk
+      }.should raise_error Interrupt
+      output.should include("Exiting")
+    end
+  end
+
   describe "cli" do
     it "prints its version" do
       `./bin/zombie_passenger_killer -v`.should =~ /^\d+\.\d+\.\d+$/m
