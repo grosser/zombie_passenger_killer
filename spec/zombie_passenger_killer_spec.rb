@@ -2,10 +2,16 @@ require File.expand_path('spec/spec_helper')
 
 describe ZombiePassengerKiller do
   let(:killer){
-    k = ZombiePassengerKiller::Reaper.new(@options || {})
-    k.stub!(:passenger_pids).and_return([111])
-    k
+    ZombiePassengerKiller::Reaper.new(@options || {}).tap do |k|
+      k.stub!(:passenger_pids).and_return([111])
+      k.out = StringIO.new
+    end
   }
+
+  def output
+    killer.out.rewind
+    killer.out.read
+  end
 
   it "has a VERSION" do
     ZombiePassengerKiller::VERSION.should =~ /^\d+\.\d+\.\d+$/
@@ -60,7 +66,6 @@ describe ZombiePassengerKiller do
 
   describe "#kill_zombies" do
     before do
-      killer.out = StringIO.new
       killer.instance_eval{
         @grace_time = 0.1
         @strace_time = 0.1
@@ -85,11 +90,6 @@ describe ZombiePassengerKiller do
       Process.getpgid(pid)
     rescue Errno::ESRCH
       false
-    end
-
-    def output
-      killer.out.rewind
-      killer.out.read
     end
 
     it "kills normal processes" do
@@ -122,6 +122,19 @@ describe ZombiePassengerKiller do
     it "does not fail with an unknown pid" do
       killer.kill_zombie(111)
       output.should include('No such process')
+    end
+  end
+
+  describe "#log" do
+    it "logs simple when :show_times is not given" do
+      killer.log "X"
+      output.should == "X\n"
+    end
+
+    it "logs simple when :show_times is not given" do
+      @options = {:show_times => true}
+      killer.log "X"
+      output.should include(Time.now.year.to_s)
     end
   end
 

@@ -73,8 +73,7 @@ module ZombiePassengerKiller
     end
 
     def log(msg)
-      @out.puts "#{@show_times ? "** [#{Time.now}] #$$: " : ''}#{msg}"
+      @out.puts "#{@show_times ? "** [#{Time.now.strftime('%Y-%m-%d %H:%M:%S')}] #$$: " : ''}#{msg}"
     end
-
   end
 end
