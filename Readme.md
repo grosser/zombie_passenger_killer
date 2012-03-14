@@ -28,6 +28,7 @@ Usage
         -i, --interval [SECONDS]         Check every SECONDS (default: 10)
         -p, --pattern [PATTERN]          Find processes with this pattern (default: ' Rack: ')
         -1, --once                       Check once and exit
+        --rvmsudo                        Use `rvmsudo` to see passenger-status
         -h, --help                       Show this
         -v, --version                    Show Version
         -t, --time                       Show time in output
