@@ -32,8 +32,5 @@ puts "PID: #{$$} Version: #{version} Started at #{Time.now}"
 
 $0 = File.basename(__FILE__) + '-' + version
 
-if options[:once]
-  ZombiePassengerKiller::Reaper.new(options).hunt_zombies
-else
-  ZombiePassengerKiller::Reaper.new(options).lurk
-end
+method = (options[:once] ? :hunt_zombies : :lurk)
+ZombiePassengerKiller::Reaper.new(options).send(method)
