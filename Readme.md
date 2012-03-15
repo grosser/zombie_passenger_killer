@@ -60,6 +60,7 @@ Author
 ###Contributors
  - [Roman Heinrich](https://github.com/mindreframer)
  - [Kevin Mullin](https://github.com/kmullin)
+ - [Valery Vishnyakov](https://github.com/balepc)
 
 [Michael Grosser](http://grosser.it)<br/>
 michael@grosser.it<br/>
