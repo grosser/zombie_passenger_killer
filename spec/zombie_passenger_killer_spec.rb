@@ -103,7 +103,7 @@ describe ZombiePassengerKiller do
     it "kills normal processes" do
       pid = start_bogus_process
       lambda{
-        killer.kill_zombie(pid)
+        killer.send(:kill_zombie, pid)
         sleep 0.1
       }.should change{ process_alive?(pid) }
     end
@@ -111,37 +111,37 @@ describe ZombiePassengerKiller do
     it "kills hanging processes" do
       pid = start_bogus_process :hang => true
       lambda{
-        killer.kill_zombie(pid)
+        killer.send(:kill_zombie, pid)
         sleep 0.1
       }.should change{ process_alive?(pid) }
     end
 
     it "prints an strace of the process" do
       pid = start_bogus_process
-      killer.kill_zombie(pid)
+      killer.send(:kill_zombie, pid)
       output.should include('attach:')
     end
 
     it "does not take a strace of a dead process" do
-      killer.kill_zombie(111)
+      killer.send(:kill_zombie, 111)
       output.should_not include('attach:')
     end
 
     it "does not fail with an unknown pid" do
-      killer.kill_zombie(111)
+      killer.send(:kill_zombie, 111)
       output.should include('No such process')
     end
   end
 
   describe "#log" do
     it "logs simple when :show_times is not given" do
-      killer.log "X"
+      killer.send(:log, "X")
       output.should == "X\n"
     end
 
     it "logs simple when :show_times is not given" do
       @options = {:show_times => true}
-      killer.log "X"
+      killer.send(:log, "X")
       output.should include(Time.now.year.to_s)
     end
   end

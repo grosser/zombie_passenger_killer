@@ -27,22 +27,6 @@ module ZombiePassengerKiller
       raise $!
     end
 
-    def store_current_cpu(processes)
-      keys_to_remove = @history.keys - processes.map{|x| x[:pid] }
-      keys_to_remove.each{|k| !@history.delete k }
-
-      processes.each do |process|
-        @history[process[:pid]] ||= []
-        @history[process[:pid]] << process[:cpu]
-        @history[process[:pid]] = @history[process[:pid]].last(@history_entries)
-      end
-    end
-
-    def get_strace(pid, time)
-      Process.getpgid(pid) rescue return 'No such process'
-      `( strace -p #{pid} 2>&1 ) & sleep #{time} ; kill $! 2>&1`
-    end
-
     def hunt_zombies
       active_pids_in_passenger_status = passenger_pids
       active_processes_in_processlist = process_status
@@ -61,6 +45,24 @@ module ZombiePassengerKiller
       (high_load + zombies).each do |pid|
         kill_zombie pid
       end
+    end
+
+    private
+
+    def store_current_cpu(processes)
+      keys_to_remove = @history.keys - processes.map{|x| x[:pid] }
+      keys_to_remove.each{|k| !@history.delete k }
+
+      processes.each do |process|
+        @history[process[:pid]] ||= []
+        @history[process[:pid]] << process[:cpu]
+        @history[process[:pid]] = @history[process[:pid]].last(@history_entries)
+      end
+    end
+
+    def get_strace(pid, time)
+      Process.getpgid(pid) rescue return 'No such process'
+      `( strace -p #{pid} 2>&1 ) & sleep #{time} ; kill $! 2>&1`
     end
 
     # return array of pids reported from passenger-status command, nil if passenger-status doesn't run
