@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    zombie_passenger_killer (0.2.3)
+    zombie_passenger_killer (0.2.4)
 
 GEM
   remote: http://rubygems.org/
