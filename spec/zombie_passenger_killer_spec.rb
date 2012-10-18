@@ -30,6 +30,14 @@ describe ZombiePassengerKiller do
       killer.hunt_zombies
     end
 
+    it "does not blow up when there are more processes in pids then status" do
+      @options = {:max => 1}
+      killer.stub!(:passenger_pids).and_return([123])
+      killer.stub!(:process_status).and_return([{:pid => 124, :cpu => 0}])
+      killer.should_receive(:kill_zombie).with(124)
+      killer.hunt_zombies
+    end
+
     it "kills zombies with high cpu over max" do
       @options = {:max => 1}
       killer.stub!(:process_status).and_return([{:pid => 111, :cpu => 100}])

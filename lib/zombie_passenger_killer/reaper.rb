@@ -52,7 +52,7 @@ module ZombiePassengerKiller
       high_load = if @max_high_cpu
         store_current_cpu active_processes_in_processlist
         active_pids_in_passenger_status.select do |pid|
-          @history[pid].count{|x| x > @high_cpu } >= @max_high_cpu
+          (@history[pid] || []).count{|x| x > @high_cpu } >= @max_high_cpu
         end
       else
         []
