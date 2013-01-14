@@ -62,6 +62,7 @@ Author
  - [Roman Heinrich](https://github.com/mindreframer)
  - [Kevin Mullin](https://github.com/kmullin)
  - [Valery Vishnyakov](https://github.com/balepc)
+ - [Bodo Tasche](https://github.com/bitboxer)
 
 [Michael Grosser](http://grosser.it)<br/>
 michael@grosser.it<br/>
