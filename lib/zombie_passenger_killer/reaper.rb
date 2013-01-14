@@ -68,7 +68,11 @@ module ZombiePassengerKiller
     # return array of pids reported from passenger-status command, nil if passenger-status doesn't run
     def passenger_pids
       pids = %x(#{'rvmsudo ' if @rvmsudo}passenger-status|grep PID).split("\n").map { |x| x.strip.match(/PID: \d*/).to_s.split[1].to_i }
-      pids if $?.exitstatus.zero?
+      if $?.exitstatus.zero?
+        pids
+      else
+        raise "passenger-status returned a #{$?.exitstatus} exit code. Please check if passenger-status is working properly."
+      end
     end
 
     def process_status
