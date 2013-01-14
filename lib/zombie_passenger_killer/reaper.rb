@@ -71,7 +71,7 @@ module ZombiePassengerKiller
       if $?.exitstatus.zero?
         pids
       else
-        raise "passenger-status returned a non zero exit code. Please check if passenger-status is working properly."
+        raise "passenger-status returned a #{$?.exitstatus} exit code. Please check if passenger-status is working properly."
       end
     end
 
