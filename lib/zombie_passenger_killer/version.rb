@@ -1,3 +1,3 @@
 module ZombiePassengerKiller
-  Version = VERSION = '0.2.5'
+  Version = VERSION = '0.3.0'
 end
