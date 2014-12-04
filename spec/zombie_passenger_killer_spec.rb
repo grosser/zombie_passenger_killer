@@ -86,12 +86,14 @@ describe ZombiePassengerKiller do
     end
 
     def start_bogus_process(options={})
-      marker = "TEST---#{rand(999999999999)}"
-      Thread.new do
-        `ruby -e 'at_exit{ puts "proper exit"; #{'sleep 10' if options[:hang]}}; sleep 10; puts "#{marker}"' 2>&1`
+      pid = fork do
+        at_exit do
+          sleep 10 if options[:hang]
+          sleep 10
+        end
       end
       sleep 1 # give process time to spin up
-      pid_of(marker)
+      pid
     end
 
     def process_alive?(pid)
