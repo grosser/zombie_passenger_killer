@@ -13,6 +13,14 @@ describe ZombiePassengerKiller do
     killer.out.read
   end
 
+  def pending_if(condition, &block)
+    if condition
+      pending(&block)
+    else
+      yield
+    end
+  end
+
   it "has a VERSION" do
     ZombiePassengerKiller::VERSION.should =~ /^\d+\.\d+\.\d+$/
   end
@@ -97,25 +105,29 @@ describe ZombiePassengerKiller do
     end
 
     def process_alive?(pid)
-      Process.getpgid(pid)
+      Process.getpgid(pid) && true
     rescue Errno::ESRCH
       false
     end
 
     it "kills normal processes" do
-      pid = start_bogus_process
-      lambda{
-        killer.send(:kill_zombie, pid)
-        sleep 0.1
-      }.should change{ process_alive?(pid) }
+      pending_if ENV["TRAVIS"] do
+        pid = start_bogus_process
+        lambda{
+          killer.send(:kill_zombie, pid)
+          sleep 0.1
+        }.should change{ process_alive?(pid) }
+      end
     end
 
     it "kills hanging processes" do
-      pid = start_bogus_process :hang => true
-      lambda{
-        killer.send(:kill_zombie, pid)
-        sleep 0.1
-      }.should change{ process_alive?(pid) }
+      pending_if ENV["TRAVIS"] do
+        pid = start_bogus_process :hang => true
+        lambda{
+          killer.send(:kill_zombie, pid)
+          sleep 0.1
+        }.should change{ process_alive?(pid) }
+      end
     end
 
     if system("which strace >/dev/null 2>&1")
