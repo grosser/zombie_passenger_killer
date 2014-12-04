@@ -118,10 +118,12 @@ describe ZombiePassengerKiller do
       }.should change{ process_alive?(pid) }
     end
 
-    it "prints an strace of the process" do
-      pid = start_bogus_process
-      killer.send(:kill_zombie, pid)
-      output.should include('attach:')
+    if system("which strace >/dev/null 2>&1")
+      it "prints an strace of the process" do
+        pid = start_bogus_process
+        killer.send(:kill_zombie, pid)
+        output.should include('attach:')
+      end
     end
 
     it "does not take a strace of a dead process" do
