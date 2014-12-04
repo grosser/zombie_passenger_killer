@@ -12,6 +12,7 @@ module ZombiePassengerKiller
       @pattern = options[:pattern] || ' Rack: '
       @show_times = options[:show_times] || false
       @interval = options[:interval] || 10
+      @verbose = options[:verbose]
       @strace_time = 5
       @out = STDOUT
       @rvmsudo = options[:rvmsudo]
@@ -29,8 +30,13 @@ module ZombiePassengerKiller
 
     def hunt_zombies
       active_pids_in_passenger_status = passenger_pids
+      puts "Active pids in status: #{active_pids_in_passenger_status.inspect}" if @verbose
+
       active_processes_in_processlist = process_status
+      puts "Active pids in processlist: #{active_processes_in_processlist.inspect}" if @verbose
+
       zombies = active_processes_in_processlist.map{|x| x[:pid] } - active_pids_in_passenger_status rescue Array.new
+      puts "Zombies: #{zombies.inspect}" if @verbose
 
       # kill processes with high CPU if user wants it
       high_load = if @max_high_cpu
@@ -65,10 +71,10 @@ module ZombiePassengerKiller
       `( strace -p #{pid} 2>&1 ) & sleep #{time} ; kill $! 2>&1`
     end
 
-    # return array of pids reported from passenger-status command, nil if passenger-status doesn't run
+    # return array of pids reported from passenger-status command, nil if passenger doesn't run
     def passenger_pids
-      pids = %x(#{'rvmsudo ' if @rvmsudo}passenger-status|grep PID).split("\n").map { |x| x.strip.match(/PID: \d*/).to_s.split[1].to_i }
-      if $?.exitstatus.zero?
+      pids = %x(#{'rvmsudo ' if @rvmsudo}passenger-status).split("\n").map { |l| l[/PID: (\d+)/, 1] }.compact.map(&:to_i)
+      if $?.success?
         pids
       else
         raise "passenger-status returned a #{$?.exitstatus} exit code. Please check if passenger-status is working properly."
@@ -76,9 +82,9 @@ module ZombiePassengerKiller
     end
 
     def process_status
-      %x(ps -eo pid,pcpu,args|grep -v grep|egrep '#{@pattern}').split("\n").map do |line|
-         values = line.strip.split[0..1]
-         {:pid => values.first.to_i, :cpu => values.last.to_f}
+      %x(ps -eo pid,pcpu,args|grep -v grep|grep -v zombie_passenger_killer|egrep '#{@pattern}').split("\n").map do |line|
+        values = line.strip.split[0..1]
+        {:pid => values.first.to_i, :cpu => values.last.to_f}
       end
     end
 

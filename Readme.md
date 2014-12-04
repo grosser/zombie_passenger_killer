@@ -13,7 +13,10 @@ Add passenger-status to `/etc/sudoers` or run with sudo.
 
 Install
 =======
-    sudo gem install zombie_passenger_killer
+
+```
+sudo gem install zombie_passenger_killer
+```
 
 Usage
 =====
@@ -36,12 +39,14 @@ Usage
 
 ### Bluepill script
 
-    app.process("zombie_passenger_killer") do |process|
-      process.start_command = "zombie_passenger_killer --max 5 --history 10 --cpu 30 --interval 10"
-      process.stdout = process.stderr = "/var/log/autorotate/zombie_passenger_killer.log"
-      process.pid_file = "/var/run/zombie_passenger_killer.pid"
-      process.daemonize = true
-    end
+```Ruby
+app.process("zombie_passenger_killer") do |process|
+  process.start_command = "zombie_passenger_killer --max 5 --history 10 --cpu 30 --interval 10"
+  process.stdout = process.stderr = "/var/log/autorotate/zombie_passenger_killer.log"
+  process.pid_file = "/var/run/zombie_passenger_killer.pid"
+  process.daemonize = true
+end
+```
 
 ### Monit script
 
@@ -67,5 +72,5 @@ Author
 [Michael Grosser](http://grosser.it)<br/>
 michael@grosser.it<br/>
 License: MIT<br/>
-[![Build Status](https://secure.travis-ci.org/grosser/zombie_passenger_killer.png)](http://travis-ci.org/grosser/zombie_passenger_killer)
+[![Build Status](https://travis-ci.org/grosser/zombie_passenger_killer.png)](https://travis-ci.org/grosser/zombie_passenger_killer)
 

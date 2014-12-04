@@ -22,6 +22,7 @@ BANNER
   opts.on("-i", "--interval [SECONDS]", Integer, "Check every SECONDS (default: 10)") {|i| options[:interval]=i }
   opts.on("-p", "--pattern [PATTERN]", String, "Find processes with this pattern (default: ' Rack: ')") {|i| options[:pattern]=i }
   opts.on("-1", "--once", "Check once and exit") { options[:once]=true }
+  opts.on("--verbose", "Verbose") { options[:verbose] = true }
   opts.on("--rvmsudo", "Use `rvmsudo` to see passenger-status") { options[:rvmsudo]=true }
   opts.on("-h", "--help","Show this") { puts opts; exit }
   opts.on("-v", "--version","Show Version"){ puts version; exit }
