@@ -29,7 +29,7 @@ module ZombiePassengerKiller
     end
 
     def hunt_zombies
-      active_pids_in_passenger_status = passenger_pids
+      return unless active_pids_in_passenger_status = passenger_pids
       puts "Active pids in status: #{active_pids_in_passenger_status.inspect}" if @verbose
 
       active_processes_in_processlist = process_status
@@ -77,7 +77,8 @@ module ZombiePassengerKiller
       if $?.success?
         pids
       else
-        raise "passenger-status returned a #{$?.exitstatus} exit code. Please check if passenger-status is working properly."
+        warn "passenger-status returned a #{$?.exitstatus} exit code. Please check if passenger-status is working properly."
+        nil
       end
     end
 
