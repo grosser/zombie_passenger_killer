@@ -1,4 +1,4 @@
-![Zombies on a train](http://dl.dropbox.com/u/2670385/Web/zombie.jpeg)
+![Zombies on a train](assets/zombie.jpeg?raw=true)
 
 Guaranteed zombie passengers death.
 
